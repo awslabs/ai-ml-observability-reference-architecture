@@ -1,0 +1,23 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: ray-head-monitor
+  namespace: monitoring
+  labels:
+    # `release: $HELM_RELEASE`: Prometheus can only detect ServiceMonitor with this label.
+    release:  kube-prometheus-stack
+spec:
+  jobLabel: ray-head
+  # Only select Kubernetes Services with "matchLabels".
+  namespaceSelector:
+    any: true
+  selector:
+    matchLabels:
+      ray.io/node-type: head
+  # A list of endpoints allowed as part of this ServiceMonitor.
+  endpoints:
+    - port: metrics
+    - port: as-metrics # autoscaler metrics
+    - port: dash-metrics # dashboard metrics
+  targetLabels:
+    - ray.io/cluster

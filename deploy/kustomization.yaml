@@ -1,0 +1,7 @@
+resources:
+  - monitoring-namespace.yaml
+  - prometheus-stack
+  - opensearch
+  - fluentbit
+  - endpoints
+  - dashboards

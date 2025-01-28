@@ -1,0 +1,6 @@
+namespace: monitoring
+
+resources:
+  - ray-podmonitor.yaml
+  - ray-prometheusrule.yaml
+  - ray-servicemonitor.yaml

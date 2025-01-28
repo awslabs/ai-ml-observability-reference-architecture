@@ -1,0 +1,4 @@
+namespace: monitoring
+
+resources:
+  - gpu-training.yaml

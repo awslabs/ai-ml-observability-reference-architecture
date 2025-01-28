@@ -1,0 +1,16 @@
+apiVersion: fluentbit.fluent.io/v1alpha2
+kind: ClusterFilter
+metadata:
+  labels:
+    fluentbit.fluent.io/component: logging
+    fluentbit.fluent.io/enabled: 'true'
+  name: containerd
+spec:
+  filters:
+    - lua:
+        call: containerd
+        script:
+          key: containerd.lua
+          name: fluent-bit-containerd-config
+        timeAsTable: true
+  match: kube.*

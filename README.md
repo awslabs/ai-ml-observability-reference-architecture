@@ -35,18 +35,18 @@ A Kubernetes cluster
   - `helm`
 
 ### Installation
-`kustomize build --enable-helm | kubectl create -f -`
+`kustomize build --enable-helm deploy/ | kubectl create -f -`
 
 ### Security
 The installation above uses the default username and password for Grafana and OpenSearch. To change the usernames and passwords, follow:
 
 #### Grafana
-Uncomment and set `adminUser` and `adminPassword` in `prometheus-stack/kustomization.yaml`
+Uncomment and set `adminUser` and `adminPassword` in `deploy/prometheus-stack/kustomization.yaml`
 
 #### OpenSearch
-- Update `opensearch/admin-credentials-secret.yaml` with base64 encoded username and password
-- Update `opensearch/securityconfig-secret.yaml` admin hash with the password hashed using `python -c 'import bcrypt; print(bcrypt.hashpw("admin123".encode("utf-8"), bcrypt.gensalt(12, prefix=b"2a")).decode("utf-8"))'`. Replace `admin123` with your password
-- Update `prometheus-stack/data-sources/opensearch.yaml` and update the `basicAuthUser` and `basicAuthPassword`
+- Update `deploy/opensearch/admin-credentials-secret.yaml` with base64 encoded username and password
+- Update `deploy/opensearch/securityconfig-secret.yaml` admin hash with the password hashed using `python -c 'import bcrypt; print(bcrypt.hashpw("admin123".encode("utf-8"), bcrypt.gensalt(12, prefix=b"2a")).decode("utf-8"))'`. Replace `admin123` with your password
+- Update `deploy/prometheus-stack/data-sources/opensearch.yaml` and update the `basicAuthUser` and `basicAuthPassword`
 
 ### Example
 To quickstart, we will leverage the AI on EKS base infrastructure blueprint. This blueprint will give us a Kubernetes environment with GPU and Neuron autoscaling to run the example job.
@@ -54,7 +54,7 @@ To quickstart, we will leverage the AI on EKS base infrastructure blueprint. Thi
 Follow the AI on EKS deployment HERE (LINK HERE)
 
 Now that the cluster is deployed, follow the base installation instructions:
-`kustomize build --enable-helm | kubectl create -f -`
+`kustomize build --enable-helm deploy/ | kubectl create -f -`
 
 Wait for the environment to be fully running. Next, launch a Ray GPU training job:
 

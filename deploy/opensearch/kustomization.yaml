@@ -1,0 +1,12 @@
+namespace: monitoring
+helmCharts:
+  - name: opensearch-operator
+    releaseName: opensearch-operator
+    version: 2.7.0
+    includeCRDs: true
+    repo: https://opensearch-project.github.io/opensearch-k8s-operator/
+
+resources:
+  - opensearch-cluster-custom-admin-user.yaml
+  - admin-credentials-secret.yaml
+  - securityconfig-secret.yaml

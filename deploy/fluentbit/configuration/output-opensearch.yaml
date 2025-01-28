@@ -1,0 +1,29 @@
+apiVersion: fluentbit.fluent.io/v1alpha2
+kind: ClusterOutput
+metadata:
+  name: opensearch
+  labels:
+    fluentbit.fluent.io/enabled: "true"
+    fluentbit.fluent.io/component: logging
+spec:
+  matchRegex: (?:kube|service|host)\.(.*)
+  opensearch:
+    bufferSize: 20MB
+    generateID: true
+    host: my-cluster.monitoring
+    httpPassword:
+      valueFrom:
+        secretKeyRef:
+          key: password
+          name: admin-credentials-secret
+    httpUser:
+      valueFrom:
+        secretKeyRef:
+          key: username
+          name: admin-credentials-secret
+    port: 9200
+    replaceDots: true
+    suppressTypeName: true
+    tls:
+      verify: false
+    traceError: true

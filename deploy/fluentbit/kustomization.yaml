@@ -1,0 +1,36 @@
+namespace: monitoring
+helmCharts:
+  - name: fluent-operator
+    releaseName: fluent-operator
+    version: 3.2.0
+    includeCRDs: true
+    repo: https://fluent.github.io/helm-charts
+    namespace: monitoring
+    valuesInline:
+      fluentbit:
+        enable: false
+        input:
+          tail:
+            enable: false
+          systemd:
+            enable: false
+        filter:
+          kubernetes:
+            enable: false
+          containerd:
+            enable: false
+          systemd:
+            enable: false
+      namespaceOverride: monitoring
+
+
+resources:
+  - fluentbit-fluentbit.yaml
+  - fluentbit-fluentbit-containerd-config.yaml
+  - configuration/clusterfilter-kubernetes.yaml
+  - configuration/clusterfilter-containerd.yaml
+  - configuration/fluentbit-fluentbitconfig.yaml
+  - configuration/input-kernel.yaml
+  - configuration/input-systemd.yaml
+  - configuration/input-tail.yaml
+  - configuration/output-opensearch.yaml

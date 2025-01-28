@@ -1,0 +1,28 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: opensearch-datasource
+  namespace: monitoring
+  labels:
+    grafana_datasource: '1'
+data:
+  opensearch-datasource.yaml: |-
+    apiVersion: 1
+    datasources:
+    - name: grafana-opensearch-datasource
+      type: grafana-opensearch-datasource
+      typeLogoUrl: public/plugins/grafana-opensearch-datasource/img/logo.svg
+      url: https://my-cluster.monitoring:9200
+      basicAuth: true
+      basicAuthUser: admin
+      jsonData:
+        flavor: "Opensearch"
+        logLevelField: level
+        logMessageField: log
+        maxConcurrentShardRequests: 5
+        pplEnabled: true
+        timeField: "@timestamp"
+        tlsSkipVerify: true
+        version: 2.14.0
+      secureJsonData:
+        basicAuthPassword: admin123
