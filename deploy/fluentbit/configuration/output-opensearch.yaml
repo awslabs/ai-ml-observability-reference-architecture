@@ -21,6 +21,7 @@ spec:
         secretKeyRef:
           key: username
           name: admin-credentials-secret
+    includeTagKey: true
     port: 9200
     replaceDots: true
     suppressTypeName: true
