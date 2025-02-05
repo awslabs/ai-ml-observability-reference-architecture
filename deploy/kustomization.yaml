@@ -3,5 +3,6 @@ resources:
   - prometheus-stack
   - opensearch
   - fluentbit
+  - opencost
   - endpoints
   - dashboards

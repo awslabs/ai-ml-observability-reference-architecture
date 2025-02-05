@@ -1,0 +1,26 @@
+namespace: monitoring
+
+helmCharts:
+  - name: opencost
+    releaseName: opencost
+    version: 1.43.2
+    includeCRDs: true
+    repo: https://opencost.github.io/opencost-helm-chart
+    namespace: monitoring
+    valuesInline:
+      opencost:
+        exporter:
+          extraEnv:
+            EMIT_KSM_V1_METRICS: "false"
+            EMIT_KSM_V1_METRICS_ONLY: "true"
+        metrics:
+          serviceMonitor:
+            enabled: true
+            additionalLabels:
+              release: kube-prometheus-stack
+        prometheus:
+          internal:
+            serviceName: kube-prometheus-stack-prometheus
+            namespaceName: monitoring
+            port: 9090
+      namespaceOverride: monitoring
