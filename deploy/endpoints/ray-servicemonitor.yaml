@@ -19,5 +19,6 @@ spec:
     - port: metrics
     - port: as-metrics # autoscaler metrics
     - port: dash-metrics # dashboard metrics
+    - port: serve # add serving port for vLLM metrics
   targetLabels:
     - ray.io/cluster
