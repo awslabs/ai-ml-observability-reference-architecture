@@ -1,0 +1,188 @@
+apiVersion: ray.io/v1
+kind: RayService
+metadata:
+  name: ray-serve
+  namespace: default
+spec:
+  deploymentUnhealthySecondThreshold: 900
+  rayClusterConfig:
+    headGroupSpec:
+      headService:
+        metadata:
+          name: ray-serve
+          namespace: default
+      rayStartParams:
+        dashboard-host: 0.0.0.0
+        num-cpus: '0'
+      template:
+        spec:
+          containers:
+            - env:
+                - name: VLLM_LOGGING_LEVEL
+                  value: DEBUG
+                - name: HUGGING_FACE_HUB_TOKEN
+                  valueFrom:
+                    secretKeyRef:
+                      key: token
+                      name: hf-token
+                - name: LD_LIBRARY_PATH
+                  value: /home/ray/anaconda3/lib
+                - name: RAY_GRAFANA_HOST
+                  value: >-
+                    http://kube-prometheus-stack-grafana.monitoring.svc.cluster.local
+                - name: RAY_PROMETHEUS_HOST
+                  value: >-
+                    http://kube-prometheus-stack-prometheus.monitoring.svc.cluster.local:9090
+                - name: RAY_GRAFANA_IFRAME_HOST
+                  value: http://localhost:3000
+              image: rayproject/ray:2.34.0-py311
+              imagePullPolicy: Always
+              lifecycle:
+                preStop:
+                  exec:
+                    command:
+                      - /bin/sh
+                      - '-c'
+                      - ray stop
+              name: head
+              ports:
+                - containerPort: 6379
+                  name: gcs
+                  protocol: TCP
+                - containerPort: 8265
+                  name: dashboard
+                  protocol: TCP
+                - containerPort: 10001
+                  name: client
+                  protocol: TCP
+                - containerPort: 8000
+                  name: serve
+                  protocol: TCP
+              resources:
+                limits:
+                  cpu: 4
+                  memory: 20Gi
+                requests:
+                  cpu: 4
+                  memory: 20Gi
+              volumeMounts:
+                - mountPath: /tmp/ray
+                  name: ray-logs
+                - mountPath: /home/ray/vllm_serve.py
+                  subPath: vllm_serve.py
+                  name: vllm-script
+            - name: fluentbit
+              image: fluent/fluent-bit:3.2.2
+              # Get Kubernetes metadata via downward API
+              env:
+                - name: POD_LABELS
+                  valueFrom:
+                    fieldRef:
+                      fieldPath: metadata.labels['ray.io/cluster']
+              # These resource requests for Fluent Bit should be sufficient in production.
+              resources:
+                requests:
+                  cpu: 100m
+                  memory: 128Mi
+                limits:
+                  cpu: 100m
+                  memory: 128Mi
+              volumeMounts:
+                - mountPath: /tmp/ray
+                  name: ray-logs
+                - mountPath: /fluent-bit/etc/fluent-bit.conf
+                  subPath: fluent-bit.conf
+                  name: fluentbit-config
+          volumes:
+            - emptyDir: {}
+              name: ray-logs
+            - configMap:
+                items:
+                  - key: vllm_serve.py
+                    path: vllm_serve.py
+                name: ray-serve
+              name: vllm-script
+            - name: fluentbit-config
+              configMap:
+                name: fluentbit-config
+    rayVersion: 2.34.0
+    workerGroupSpecs:
+      - groupName: worker
+        maxReplicas: 2
+        minReplicas: 1
+        numOfHosts: 1
+        rayStartParams: {}
+        replicas: 1
+        template:
+          spec:
+            containers:
+              - env:
+                  - name: LD_LIBRARY_PATH
+                    value: /home/ray/anaconda3/lib
+                  - name: VLLM_PORT
+                    value: '8004'
+                  - name: TORCH_DISTRIBUTED_DEBUG
+                    value: DETAIL
+                  - name: VLLM_LOGGING_LEVEL
+                    value: DEBUG
+                  - name: HUGGING_FACE_HUB_TOKEN
+                    valueFrom:
+                      secretKeyRef:
+                        key: token
+                        name: hf-token
+                image: rayproject/ray:2.34.0-py311-gpu
+                imagePullPolicy: IfNotPresent
+                lifecycle:
+                  preStop:
+                    exec:
+                      command:
+                        - /bin/sh
+                        - '-c'
+                        - ray stop
+                name: worker
+                resources:
+                  limits:
+                    nvidia.com/gpu: '1'
+                  requests:
+                    nvidia.com/gpu: '1'
+                volumeMounts:
+                  - mountPath: /tmp/ray
+                    name: ray-logs
+              - name: fluentbit
+                image: fluent/fluent-bit:3.2.2
+                env:
+                  - name: POD_LABELS
+                    valueFrom:
+                      fieldRef:
+                        fieldPath: metadata.labels['ray.io/cluster']
+                resources:
+                  requests:
+                    cpu: 100m
+                    memory: 128Mi
+                  limits:
+                    cpu: 100m
+                    memory: 128Mi
+                volumeMounts:
+                  - mountPath: /tmp/ray
+                    name: ray-logs
+                  - mountPath: /fluent-bit/etc/fluent-bit.conf
+                    subPath: fluent-bit.conf
+                    name: fluentbit-config
+            tolerations:
+              - key: nvidia.com/gpu
+                operator: Exists
+                effect: NoSchedule
+            volumes:
+              - emptyDir: {}
+                name: ray-logs
+              - name: fluentbit-config
+                configMap:
+                  name: fluentbit-config
+  serveConfigV2: |
+    applications:
+      - name: serve
+        import_path: vllm_serve:deployment
+        runtime_env:
+          pip:
+            - vllm==0.6.2
+  serviceUnhealthySecondThreshold: 900

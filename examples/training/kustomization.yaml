@@ -1,0 +1,5 @@
+namespace: default
+
+resources:
+  - finetuning-configmap.yaml
+  - ray-finetuning-job.yaml

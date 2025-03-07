@@ -1,0 +1,6 @@
+namespace: default
+
+resources:
+  - fluentbit-configmap.yaml
+  - ray-vllm-configmap.yaml
+  - ray-vllm-rayservice.yaml

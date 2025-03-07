@@ -63,9 +63,44 @@ Wait for the environment to be fully running.
 #### Training
 ![](./static/training-dashboard.gif)
 
-#### Inference
+A reference dashboard is provided to illustrate correlating logs with metrics from the GPU, CPU, RAM, network, and storage. To deploy the example job:
 
+`kustomize build examples/training | kubectl create -f -`
+
+This will deploy a 4 GPU training job to finetune a llama 3.2-1B model for instruction finetuning.
+
+After the job starts: 
+
+`kubectl port-forward -n monitoring svc/kube-prometheus-stack-grafana 3000:80`. 
+
+You can then open the following link to see the dashboard for the training job: http://localhost:3000/d/ee6mbjghme96oc/gpu-training?orgId=1&refresh=5s&var-namespace=default&var-job=ray-train&var-instance=All
+
+#### Inference
 ![](./static/inference-dashboard.gif)
+
+A reference dashboard is provided to illustrate correlating logs with for vLLM with GPU and vLLM metrics. To deploy the example inference server:
+
+`kustomize build examples/inference | kubectl create -f -`
+
+This will deploy a GPU inference server for llama 3.2-1B model.
+
+After the server starts:
+
+`kubectl port-forward -n monitoring svc/kube-prometheus-stack-grafana 3000:80`.
+
+You can then open the following link to see the dashboard for the inference server: http://localhost:3000/d/bec31e71-3ac5-4133-b2e3-b9f75c8ab56c/inference-dashboard?orgId=1&refresh=5s
+
+Finally, you can send requests to the inference server. Port forward the inference port: 
+
+`kubectl port-forward svc/ray-serve 8000`
+Then you can send continuous requests: 
+```bash
+while true; do curl --location 'http://localhost:8000/vllm' \                                                                ✘ INT  base  15:20:46
+--header 'Content-Type: application/json' \
+--data '{"prompt": "this is a test"}'; done;
+```
+
+You should start to see data coming in to the dashboard shortly. To stop sending requests press `ctrl + c` in the terminal.
 
 ## Support
 Reach out to omrishiv@ for help

@@ -1,0 +1,86 @@
+apiVersion: ray.io/v1
+kind: RayJob
+metadata:
+  name: ray-train
+spec:
+  entrypoint: python3 /home/ray/samples/train_code.py
+  rayClusterSpec:
+    headGroupSpec:
+      rayStartParams:
+        dashboard-host: 0.0.0.0
+        num-cpus: '0'
+      template:
+        metadata: {}
+        spec:
+          containers:
+            - image: rayproject/ray:2.34.0-py311
+              name: ray-head
+              ports:
+                - containerPort: 6379
+                  name: gcs-server
+                  protocol: TCP
+                - containerPort: 8265
+                  name: dashboard
+                  protocol: TCP
+                - containerPort: 10001
+                  name: client
+                  protocol: TCP
+              resources:
+                limits:
+                  cpu: '1'
+                  memory: 4Gi
+                requests:
+                  cpu: '1'
+                  memory: 4Gi
+              volumeMounts:
+                - mountPath: /home/ray/samples
+                  name: code
+          volumes:
+            - configMap:
+                items:
+                  - key: train_code.py
+                    path: train_code.py
+                name: ray-train
+              name: code
+    rayVersion: 2.34.0
+    workerGroupSpecs:
+      - groupName: gpu-group
+        maxReplicas: 1
+        minReplicas: 1
+        numOfHosts: 1
+        rayStartParams:
+          dashboard-host: 0.0.0.0
+        replicas: 4
+        scaleStrategy: {}
+        template:
+          metadata: {}
+          spec:
+            containers:
+              - image: rayproject/ray:2.34.0-py311-gpu
+                name: ray-worker
+                resources:
+                  limits:
+                    nvidia.com/gpu: '4'
+                  requests:
+                    nvidia.com/gpu: '4'
+                volumeMounts:
+                  - mountPath: /tmp/ray
+                    name: ray-logs
+            tolerations:
+              - effect: NoSchedule
+                key: nvidia.com/gpu
+                operator: Exists
+            volumes:
+              - emptyDir: {}
+                name: ray-logs
+  runtimeEnvYAML: |
+    env_vars:
+      PYTHONUNBUFFERED: '0'
+    pip:
+      - accelerate==1.2.1
+      - datasets==3.2.0
+      - trl==0.13.0
+      - transformers==4.47.1
+      - bitsandbytes==0.45.3
+  submissionMode: K8sJobMode
+  ttlSecondsAfterFinished: 0
