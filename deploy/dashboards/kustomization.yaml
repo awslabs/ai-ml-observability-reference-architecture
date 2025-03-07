@@ -2,3 +2,4 @@ namespace: monitoring
 
 resources:
   - gpu-training.yaml
+  - inference-dashboard.yaml
