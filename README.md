@@ -49,6 +49,8 @@ Uncomment and set `adminUser` and `adminPassword` in `deploy/prometheus-stack/ku
 - Update `deploy/prometheus-stack/data-sources/opensearch.yaml` and update the `basicAuthUser` and `basicAuthPassword`
 
 ### Example
+
+#### Setup
 To quickstart, we will leverage the AI on EKS base infrastructure blueprint. This blueprint will give us a Kubernetes environment with GPU and Neuron autoscaling to run the example job.
 
 Follow the AI on EKS deployment HERE (LINK HERE)
@@ -56,7 +58,14 @@ Follow the AI on EKS deployment HERE (LINK HERE)
 Now that the cluster is deployed, follow the base installation instructions:
 `kustomize build --enable-helm deploy/ | kubectl create -f -`
 
-Wait for the environment to be fully running. Next, launch a Ray GPU training job:
+Wait for the environment to be fully running. 
+
+#### Training
+![](./static/training-dashboard.gif)
+
+#### Inference
+
+![](./static/inference-dashboard.gif)
 
 ## Support
 Reach out to omrishiv@ for help
