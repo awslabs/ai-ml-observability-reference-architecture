@@ -30,9 +30,9 @@ A Kubernetes cluster
   - neuron device drivers/neuron-monitor (if using)
   - kuberay (if using)
 - Client tools:
-  - `kubectl`
-  - `kustomize`
-  - `helm`
+  - `kubectl` (tested with v1.30.0)
+  - `kustomize` (tested with v5.0.4-0.20230601165947-6ce0bf390ce3)
+  - `helm` (tested with v3.15.0)
 
 ### Installation
 `kustomize build --enable-helm deploy/ | kubectl create -f -`
