@@ -79,8 +79,10 @@ You can then open the following link to see the dashboard for the training job: 
 ![](./static/inference-dashboard.gif)
 
 A reference dashboard is provided to illustrate correlating logs with for vLLM with GPU and vLLM metrics. To deploy the example inference server:
-
-`kustomize build examples/inference | kubectl create -f -`
+1) Create a Hugging Face account: https://huggingface.co/join
+2) Create a Hugging Face token: https://huggingface.co/docs/hub/en/security-tokens. Make sure you copy the token, it will not be displayed again.
+3) Create a Kuberetes secret from the token: `kubectl create secret generic hf-token --from-literal=token=TOKEN` (replace `TOKEN` with the token you copied from the previous step)
+4) `kustomize build examples/inference | kubectl create -f -`
 
 This will deploy a GPU inference server for llama 3.2-1B model.
 
