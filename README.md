@@ -103,7 +103,7 @@ while true; do curl --location 'http://localhost:8000/vllm' \                   
 You should start to see data coming in to the dashboard shortly. To stop sending requests press `ctrl + c` in the terminal.
 
 ## Support
-Reach out to omrishiv@ for help
+Please open an issue
 
 ## Roadmap
 
