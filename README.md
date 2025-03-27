@@ -53,7 +53,7 @@ Uncomment and set `adminUser` and `adminPassword` in `deploy/prometheus-stack/ku
 #### Setup
 To quickstart, we will leverage the AI on EKS base infrastructure blueprint. This blueprint will give us a Kubernetes environment with GPU and Neuron autoscaling to run the example job.
 
-Follow the AI on EKS deployment HERE (LINK HERE)
+Follow the AI on EKS deployment (Link to come soon)
 
 Now that the cluster is deployed, follow the base installation instructions:
 `kustomize build --enable-helm deploy/ | kubectl create -f -`
