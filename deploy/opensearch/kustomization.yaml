@@ -2,6 +2,7 @@ namespace: monitoring
 helmCharts:
   - name: opensearch-operator
     releaseName: opensearch-operator
+    namespace: monitoring
     version: 2.7.0
     includeCRDs: true
     repo: https://opensearch-project.github.io/opensearch-k8s-operator/
