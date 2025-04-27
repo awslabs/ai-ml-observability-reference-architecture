@@ -41,7 +41,6 @@ spec:
     - component: masters
       replicas: 3
       diskSize: "30Gi"
-      nodeSelector:
       resources:
         requests:
           memory: "4Gi"
