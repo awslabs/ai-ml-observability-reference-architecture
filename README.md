@@ -51,7 +51,7 @@ Uncomment and set `adminUser` and `adminPassword` in `deploy/prometheus-stack/ku
 ### Example
 
 #### Setup
-To quickstart, we will leverage the AI on EKS base infrastructure blueprint. This blueprint will give us a Kubernetes environment with GPU and Neuron autoscaling to run the example job.
+To quickstart, we will leverage the AI on EKS JARK infrastructure. This infrastructure will give us a Kubernetes environment with GPU and Neuron autoscaling to run the example job, KubeRay operator to run Ray jobs, and the observability architecture already deployed.
 
 Follow the AI on EKS [JARK deployment](https://awslabs.github.io/ai-on-eks/docs/infra/ai-ml/jark)
 
