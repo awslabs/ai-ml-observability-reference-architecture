@@ -35,8 +35,9 @@ A Kubernetes cluster
   - `helm` (tested with v3.15.0)
 
 ### Installation
-After you clone this repository, run:
+Clone this repository and run the installation script. For example:
 ```
+git clone git@github.com:awslabs/ai-ml-observability-reference-architecture.git
 cd ai-ml-observability-reference-architecture
 kustomize build --enable-helm deploy/ | kubectl create -f -
 ```
