@@ -35,7 +35,12 @@ A Kubernetes cluster
   - `helm` (tested with v3.15.0)
 
 ### Installation
-`kustomize build --enable-helm deploy/ | kubectl create -f -`
+Clone this repository and run the installation script. For example:
+```
+git clone git@github.com:awslabs/ai-ml-observability-reference-architecture.git
+cd ai-ml-observability-reference-architecture
+kustomize build --enable-helm deploy/ | kubectl create -f -
+```
 
 ### Security
 The installation above uses the default username and password for Grafana and OpenSearch. To change the usernames and passwords, follow:
