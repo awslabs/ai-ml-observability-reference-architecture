@@ -1,7 +1,11 @@
 # ai-ml-observability-reference-architecture
+This project provides a comprehensive monitoring solution for AI and ML workloads running on Kubernetes.
 
-## What is it?
-A reference architecture for AI and ML Observability.
+## About
+This open-source observability stack integrates three key components to deliver end-to-end visibility into AI/ML infrastructure and applications:
+* **Prometheus** serves as the core metrics collection and storage engine, gathering performance data from GPU utilization and memory metrics (via DCGM for NVIDIA GPUs), CPU, memory, network, and storage metrics from Kubernetes nodes, application-specific metrics from AI/ML workloads like Ray training jobs and vLLM inference servers, and Kubernetes cluster metrics and resource utilization.
+* **Grafana** functions as the primary visualization and dashboarding platform, providing pre-built dashboards for GPU training workloads that correlate logs with GPU, CPU, RAM, network, and storage metrics, inference monitoring dashboards that track vLLM server performance alongside GPU utilization, real-time visualization of AI/ML job performance with 5-second refresh intervals, and integration with both Prometheus (metrics) and OpenSearch (logs) data sources.
+* **Fluent Bit** handles comprehensive log aggregation and forwarding by collecting container logs from AI/ML workloads using tail inputs, gathering system logs via systemd integration, processing kernel-level logs for infrastructure,  monitoring, applying Kubernetes metadata enrichment to correlate logs with specific pods and services, forwarding all processed logs to OpenSearch for centralized storage and analysis.
 
 ![a picture showing the reference architecture components](./static/reference_architecture.png)
 
