@@ -1,0 +1,61 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: opensearch-mcp-server
+  namespace: monitoring
+  labels:
+    app: opensearch-mcp-server
+spec:
+  selector:
+    matchLabels:
+      app: opensearch-mcp-server
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: opensearch-mcp-server
+        deployment: opensearch-mcp-server
+    spec:
+      containers:
+        - name: server
+          image: python:3.13-slim
+          command:
+            - /bin/bash
+            - -c
+          args: ["pip install opensearch-mcp-server-py==0.7.0 && python -m mcp_server_opensearch --transport stream"]
+          env:
+            - name: OPENSEARCH_URL
+              value: "https://my-cluster.monitoring.svc.cluster.local:9200"
+            - name: OPENSEARCH_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  key: username
+                  name: opensearch-admin-password
+            - name: OPENSEARCH_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: password
+                  name: opensearch-admin-password
+            - name: OPENSEARCH_SSL_VERIFY
+              value: "false"
+          ports:
+            - name: http
+              containerPort: 9900
+              protocol: TCP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: opensearch-mcp-server
+  namespace: monitoring
+  labels:
+    app: opensearch-mcp-server
+spec:
+  selector:
+    app: opensearch-mcp-server
+    deployment: opensearch-mcp-server
+  ports:
+    - port: 9900
+      targetPort: http
+      protocol: TCP
+
