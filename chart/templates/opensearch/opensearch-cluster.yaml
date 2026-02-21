@@ -1,0 +1,53 @@
+{{- if .Values.opensearch.enabled }}
+apiVersion: opensearch.opster.io/v1
+kind: OpenSearchCluster
+metadata:
+  name: opensearch
+  namespace: {{ .Release.Namespace }}
+spec:
+  general:
+    version: 2.14.0
+    httpPort: 9200
+    vendor: opensearch
+    serviceName: my-cluster
+  security:
+    config:
+      adminCredentialsSecret:
+        name: admin-credentials-secret
+      securityConfigSecret:
+        name: securityconfig-secret
+    tls:
+      transport:
+        generate: true
+      http:
+        generate: true
+  dashboards:
+    opensearchCredentialsSecret:
+      name: admin-credentials-secret
+    version: 2.14.0
+    enable: true
+    replicas: 2
+    resources:
+      requests:
+        memory: "1Gi"
+        cpu: "500m"
+      limits:
+        memory: "1Gi"
+        cpu: "500m"
+  confMgmt:
+    smartScaler: true
+  nodePools:
+    - component: masters
+      replicas: 3
+      diskSize: "30Gi"
+      resources:
+        requests:
+          memory: "4Gi"
+          cpu: "1"
+        limits:
+          memory: "4Gi"
+          cpu: "1"
+      roles:
+        - "cluster_manager"
+        - "data"
+{{- end }}

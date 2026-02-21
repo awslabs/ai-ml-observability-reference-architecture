@@ -1,0 +1,44 @@
+{{- if and .Values.mcp.enabled .Values.mcp.prometheus.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: prometheus-mcp
+  name: prometheus-mcp
+  namespace: {{ .Release.Namespace }}
+spec:
+  template:
+    metadata:
+      labels:
+        app: prometheus-mcp
+    spec:
+      containers:
+        - name: mcp
+          env:
+            - name: PROMETHEUS_URL
+              value: http://kube-prometheus-stack-prometheus.{{ .Release.Namespace }}.svc.cluster.local:9090
+            - name: PROMETHEUS_MCP_SERVER_TRANSPORT
+              value: sse
+          ports:
+            - containerPort: 8080
+          image: ghcr.io/pab1it0/prometheus-mcp-server:1.5.3
+  selector:
+    matchLabels:
+      app: prometheus-mcp
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: prometheus-mcp
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: prometheus-mcp
+spec:
+  ports:
+    - name: http
+      protocol: TCP
+      port: 8080
+      targetPort: 8080
+  selector:
+    app: prometheus-mcp
+{{- end }}

@@ -1,0 +1,33 @@
+{{- if .Values.fluentbit.enabled }}
+apiVersion: fluentbit.fluent.io/v1alpha2
+kind: ClusterInput
+metadata:
+  name: dmesg
+  labels:
+    fluentbit.fluent.io/enabled: "true"
+    fluentbit.fluent.io/component: logging
+spec:
+  tail:
+    tag: host.dmesg
+    path: /var/log/dmesg
+    refreshIntervalSeconds: 10
+    memBufLimit: 100MB
+    skipLongLines: true
+    db: /fluent-bit/tail/dmesg.db
+---
+apiVersion: fluentbit.fluent.io/v1alpha2
+kind: ClusterInput
+metadata:
+  name: messages
+  labels:
+    fluentbit.fluent.io/enabled: "true"
+    fluentbit.fluent.io/component: logging
+spec:
+  tail:
+    tag: host.messages
+    path: /var/log/messages
+    refreshIntervalSeconds: 10
+    memBufLimit: 100MB
+    skipLongLines: true
+    db: /fluent-bit/tail/messages.db
+{{- end }}

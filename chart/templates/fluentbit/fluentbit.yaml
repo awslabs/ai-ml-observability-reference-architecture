@@ -1,0 +1,26 @@
+{{- if .Values.fluentbit.enabled }}
+apiVersion: fluentbit.fluent.io/v1alpha2
+kind: FluentBit
+metadata:
+  name: fluent-bit
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/name: fluent-bit
+spec:
+  containerLogRealPath: /var/log/containers
+  fluentBitConfigName: fluent-bit-config
+  image: ghcr.io/fluent/fluent-operator/fluent-bit:3.1.8
+  internalMountPropagation: HostToContainer
+  positionDB:
+    hostPath:
+      path: /var/lib/fluent-bit/
+  resources:
+    requests:
+      cpu: 10m
+      memory: 25Mi
+    limits:
+      cpu: 500m
+      memory: 200Mi
+  tolerations:
+    - operator: Exists
+{{- end }}

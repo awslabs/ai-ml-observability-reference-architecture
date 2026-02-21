@@ -1,0 +1,76 @@
+# -------------------------------------------------------
+# Component toggles
+# -------------------------------------------------------
+prometheus-stack:
+  enabled: true
+
+opensearch:
+  enabled: true
+  credentials:
+    adminUsername: admin
+    adminPassword: admin123
+    dashboardUserPassword: admin123
+
+fluentbit:
+  enabled: true
+
+opencost:
+  enabled: true
+
+endpoints:
+  enabled: true
+
+dashboards:
+  enabled: true
+
+mcp:
+  enabled: false  # opt-in: set to true to deploy MCP servers
+  kubernetes:
+    enabled: true
+  opensearch:
+    enabled: true
+  prometheus:
+    enabled: true
+
+# -------------------------------------------------------
+# Subchart values (passed through to dependencies)
+# -------------------------------------------------------
+kube-prometheus-stack:
+  grafana:
+    plugins:
+      - grafana-opensearch-datasource
+
+opensearch-operator: {}
+
+fluent-operator:
+  fluentbit:
+    enable: false
+    input:
+      tail:
+        enable: false
+      systemd:
+        enable: false
+    filter:
+      kubernetes:
+        enable: false
+      containerd:
+        enable: false
+      systemd:
+        enable: false
+
+opencost:
+  opencost:
+    exporter:
+      extraEnv:
+        EMIT_KSM_V1_METRICS: "false"
+        EMIT_KSM_V1_METRICS_ONLY: "true"
+    metrics:
+      serviceMonitor:
+        enabled: true
+        additionalLabels:
+          release: kube-prometheus-stack
+    prometheus:
+      internal:
+        serviceName: kube-prometheus-stack-prometheus
+        namespaceName: monitoring
+        port: 9090
