@@ -15,12 +15,28 @@ This open source observability stack integrates three key components to deliver 
 Typically, the initial interest in AI/ML observability regards GPU utilization: is it 100%? When it's not, we start to wonder why.
 Investigating why may lead Data Scientists or Machine Learning Engineers into their code rather than infrastructure,
 or SREs to infrastructure when the problem may be code. Additionally, if things fail, it can be very challenging to understand
-why without a view of the entire picture
+why without a view of the entire picture.
 
 Creating a reference architecture for AI/ML observability enables all parties to be able to quickly understand how effectively
 hardware is being utilized, while also allowing for faster root cause analysis of issues.
 
-This repository provides two deployment methods — Kustomize and Helm — to deploy an open source observability stack.
+### Traditional observability
+
+![Traditional observability workflow](./static/traditional.png)
+
+In a traditional setup, SREs and platform engineers are the glue between dashboards and action. An alert fires, an engineer opens Grafana, writes PromQL queries, cross-references logs in OpenSearch, checks pod status with kubectl, and pieces together a diagnosis. This works, but it requires deep familiarity with the tooling, the query languages, and the system topology. For AI/ML workloads — where GPU metrics, training hyperparameters, and infrastructure telemetry all interact — the cognitive load is even higher.
+
+### Agent-augmented observability
+
+![Agent-augmented observability workflow](./static/modern.png)
+
+This repository also supports an agent-augmented approach. By deploying MCP (Model Context Protocol) servers alongside the observability stack, an AI agent can directly query Prometheus metrics, search OpenSearch logs, and inspect Kubernetes resources — the same data sources an SRE would use, but accessed programmatically through tool use. The agent can correlate GPU utilization with node-level bottlenecks, cross-reference cost data from OpenCost, inspect training code stored in ConfigMaps, and surface actionable recommendations — all from a single natural language prompt.
+
+This doesn't replace SREs. It gives them a faster path from alert to diagnosis, handles the routine correlation work that eats up incident response time, and makes the observability stack accessible to ML engineers who may not know PromQL or the OpenSearch query syntax. See the [agent documentation](deploy/agent/README.md) for setup and usage.
+
+### Deployment
+
+This repository provides two deployment methods — Kustomize and Helm — to deploy the observability stack.
 The components can be configured or swapped, but the philosophy remains the same: aggregate the important data to quickly
 enable diagnoses. Bring your own cluster, deploy the stack, and test out the examples or skip ahead to monitoring your own jobs.
 
@@ -289,6 +305,7 @@ deploy/                     # Kustomize-based deployment (original)
   endpoints/                 # Ray ServiceMonitor, PodMonitor, PrometheusRule
   dashboards/                # Grafana dashboard ConfigMaps
   mcp/                       # MCP server deployments (not included by default)
+  agent/                     # AI optimization agent and Streamlit UI
 
 chart/                       # Helm umbrella chart
   Chart.yaml                 # Declares the same 4 upstream charts as dependencies

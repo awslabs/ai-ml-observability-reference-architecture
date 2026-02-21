@@ -1,0 +1,7 @@
+strands-agents
+strands-agents-tools
+mcp
+fastapi
+uvicorn[standard]
+pydantic
+sse-starlette
