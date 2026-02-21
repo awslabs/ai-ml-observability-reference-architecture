@@ -58,4 +58,3 @@ spec:
     - port: 9900
       targetPort: http
       protocol: TCP
-
