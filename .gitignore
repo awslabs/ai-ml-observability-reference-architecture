@@ -1,0 +1,24 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# IDEs
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Helm
+chart/charts/
+chart/Chart.lock
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# Secrets — never commit real credentials
+*.pem
+*.key
+.env

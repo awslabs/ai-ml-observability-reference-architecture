@@ -1,0 +1,23 @@
+{{- if .Values.endpoints.enabled }}
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: ray-head-monitor
+  namespace: {{ .Release.Namespace }}
+  labels:
+    release: kube-prometheus-stack
+spec:
+  jobLabel: ray-head
+  namespaceSelector:
+    any: true
+  selector:
+    matchLabels:
+      ray.io/node-type: head
+  endpoints:
+    - port: metrics
+    - port: as-metrics
+    - port: dash-metrics
+    - port: serve
+  targetLabels:
+    - ray.io/cluster
+{{- end }}

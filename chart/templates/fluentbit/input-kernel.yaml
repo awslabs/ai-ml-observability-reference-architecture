@@ -1,3 +1,4 @@
+{{- if .Values.fluentbit.enabled }}
 apiVersion: fluentbit.fluent.io/v1alpha2
 kind: ClusterInput
 metadata:
@@ -29,4 +30,4 @@ spec:
     memBufLimit: 100MB
     skipLongLines: true
     db: /fluent-bit/tail/messages.db
----
+{{- end }}

@@ -1,0 +1,30 @@
+{{- if index .Values "prometheus-stack" "enabled" }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: opensearch-datasource
+  namespace: {{ .Release.Namespace }}
+  labels:
+    grafana_datasource: '1'
+data:
+  opensearch-datasource.yaml: |-
+    apiVersion: 1
+    datasources:
+    - name: grafana-opensearch-datasource
+      type: grafana-opensearch-datasource
+      typeLogoUrl: public/plugins/grafana-opensearch-datasource/img/logo.svg
+      url: https://my-cluster.{{ .Release.Namespace }}:9200
+      basicAuth: true
+      basicAuthUser: {{ .Values.opensearch.credentials.adminUsername }}
+      jsonData:
+        flavor: "Opensearch"
+        logLevelField: level
+        logMessageField: log
+        maxConcurrentShardRequests: 5
+        pplEnabled: true
+        timeField: "@timestamp"
+        tlsSkipVerify: true
+        version: 2.14.0
+      secureJsonData:
+        basicAuthPassword: {{ .Values.opensearch.credentials.adminPassword }}
+{{- end }}

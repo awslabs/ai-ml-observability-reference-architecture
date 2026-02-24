@@ -6,3 +6,4 @@ resources:
   - opencost
   - endpoints
   - dashboards
+  # - mcp

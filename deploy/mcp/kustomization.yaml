@@ -1,0 +1,6 @@
+namespace: monitoring
+
+resources:
+  - kubernetes
+  - opensearch
+  - prometheus
