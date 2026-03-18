@@ -40,7 +40,10 @@ kube-prometheus-stack:
     plugins:
       - grafana-opensearch-datasource
 
-opensearch-operator: {}
+opensearch-operator:
+  kubeRbacProxy:
+    image:
+      repository: public.ecr.aws/aws-observability/mirror-kube-rbac-proxy
 
 fluent-operator:
   fluentbit:
